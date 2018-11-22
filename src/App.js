@@ -128,141 +128,141 @@ const schema = {
  * @type {Component}
  */
 
-class App extends React.Component {
+// class App extends React.Component {
 
-  state = {
-    value: initialValue,
-  }
-  /**
-   * Store a reference to the `editor`.
-   *
-   * @param {Editor} editor
-   */
+//   state = {
+//     value: initialValue,
+//   }
+//   /**
+//    * Store a reference to the `editor`.
+//    *
+//    * @param {Editor} editor
+//    */
 
-  ref = editor => {
-    this.editor = editor
-  }
+//   ref = editor => {
+//     this.editor = editor
+//   }
 
-  /**
-   * Render the app.
-   *
-   * @return {Element} element
-   */
+//   /**
+//    * Render the app.
+//    *
+//    * @return {Element} element
+//    */
 
-  onChange = ({ value }) => {
-    this.setState({ value })
-  }
+//   onChange = ({ value }) => {
+//     this.setState({ value })
+//   }
 
-  render() {
-    return (
-      <div>
-        <Toolbar>
-          <Button onMouseDown={this.onClickImage}>
-            <Icon>image</Icon>
-          </Button>
-        </Toolbar>
-        <Editor 
+//   render() {
+//     return (
+//       <div>
+//         <Toolbar>
+//           <Button onMouseDown={this.onClickImage}>
+//             <Icon>image</Icon>
+//           </Button>
+//         </Toolbar>
+//         <Editor 
         
-        placeholder="Enter some text..."
-        ref={this.ref}
-        defaultValue={initialValue}
-        schema={schema}
-        onDrop={this.onDropOrPaste}
-        onPaste={this.onDropOrPaste}
-        renderNode={this.renderNode}
+//         placeholder="Enter some text..."
+//         ref={this.ref}
+//         defaultValue={initialValue}
+//         schema={schema}
+//         onDrop={this.onDropOrPaste}
+//         onPaste={this.onDropOrPaste}
+//         renderNode={this.renderNode}
 
 
-        value={this.state.value} 
-        onChange={this.onChange} />
-        {/* <Editor
-          placeholder="Enter some text..."
-          ref={this.ref}
-          defaultValue={initialValue}
-          schema={schema}
-          onDrop={this.onDropOrPaste}
-          onPaste={this.onDropOrPaste}
-          renderNode={this.renderNode}
-        /> */}
-      </div>
-    )
-  }
+//         value={this.state.value} 
+//         onChange={this.onChange} />
+//         {/* <Editor
+//           placeholder="Enter some text..."
+//           ref={this.ref}
+//           defaultValue={initialValue}
+//           schema={schema}
+//           onDrop={this.onDropOrPaste}
+//           onPaste={this.onDropOrPaste}
+//           renderNode={this.renderNode}
+//         /> */}
+//       </div>
+//     )
+//   }
 
-  /**
-   * Render a Slate node.
-   *
-   * @param {Object} props
-   * @return {Element}
-   */
+//   /**
+//    * Render a Slate node.
+//    *
+//    * @param {Object} props
+//    * @return {Element}
+//    */
 
-  renderNode = (props, editor, next) => {
-    const { attributes, node, isFocused } = props
+//   renderNode = (props, editor, next) => {
+//     const { attributes, node, isFocused } = props
 
-    switch (node.type) {
-      case 'image': {
-        const src = node.data.get('src')
-        return <Image src={src} selected={isFocused} {...attributes} />
-      }
+//     switch (node.type) {
+//       case 'image': {
+//         const src = node.data.get('src')
+//         return <Image src={src} selected={isFocused} {...attributes} />
+//       }
 
-      default: {
-        return next()
-      }
-    }
-  }
+//       default: {
+//         return next()
+//       }
+//     }
+//   }
 
-  /**
-   * On clicking the image button, prompt for an image and insert it.
-   *
-   * @param {Event} event
-   */
+//   /**
+//    * On clicking the image button, prompt for an image and insert it.
+//    *
+//    * @param {Event} event
+//    */
 
-  onClickImage = event => {
-    event.preventDefault()
-    const src = window.prompt('Enter the URL of the image:')
+//   onClickImage = event => {
+//     event.preventDefault()
+//     const src = window.prompt('Enter the URL of the image:')
     
-    if (!src) return
-    this.editor.command(insertImage, src)
-  }
+//     if (!src) return
+//     this.editor.command(insertImage, src)
+//   }
 
-  /**
-   * On drop, insert the image wherever it is dropped.
-   *
-   * @param {Event} event
-   * @param {Editor} editor
-   * @param {Function} next
-   */
+//   /**
+//    * On drop, insert the image wherever it is dropped.
+//    *
+//    * @param {Event} event
+//    * @param {Editor} editor
+//    * @param {Function} next
+//    */
 
-  onDropOrPaste = (event, editor, next) => {
-    const target = getEventRange(event, editor)
-    if (!target && event.type === 'drop') return next()
+//   onDropOrPaste = (event, editor, next) => {
+//     const target = getEventRange(event, editor)
+//     if (!target && event.type === 'drop') return next()
 
-    const transfer = getEventTransfer(event)
-    const { type, text, files } = transfer
+//     const transfer = getEventTransfer(event)
+//     const { type, text, files } = transfer
 
-    if (type === 'files') {
-      for (const file of files) {
-        const reader = new FileReader()
-        const [mime] = file.type.split('/')
-        if (mime !== 'image') continue
+//     if (type === 'files') {
+//       for (const file of files) {
+//         const reader = new FileReader()
+//         const [mime] = file.type.split('/')
+//         if (mime !== 'image') continue
 
-        reader.addEventListener('load', () => {
-          editor.command(insertImage, reader.result, target)
-        })
+//         reader.addEventListener('load', () => {
+//           editor.command(insertImage, reader.result, target)
+//         })
 
-        reader.readAsDataURL(file)
-      }
-      return
-    }
+//         reader.readAsDataURL(file)
+//       }
+//       return
+//     }
 
-    if (type === 'text') {
-      if (!isUrl(text)) return next()
-      if (!isImage(text)) return next()
-      editor.command(insertImage, text, target)
-      return
-    }
+//     if (type === 'text') {
+//       if (!isUrl(text)) return next()
+//       if (!isImage(text)) return next()
+//       editor.command(insertImage, text, target)
+//       return
+//     }
 
-    next()
-  }
-}
+//     next()
+//   }
+// }
 
 /**
  * Export.
@@ -302,6 +302,8 @@ export class RichTextExample extends React.Component {
 
   state = {
     value: initialValue,
+    initialTopLevelBlockNodeCount:0,
+    disableSave: false,
   }
   
 
@@ -345,15 +347,37 @@ export class RichTextExample extends React.Component {
    * @return {Element}
    */
 
-  onChange = ({ value }) => {
-    this.setState({ value })
-  }
+  // onChange = ({ value }) => {
+  //   this.setState({ value })
+  // }
 
   showOpenFileDlg = () => {
       this.inputRef.current.click()
   }
+
+  clickSave = () => {
+    // if (value.document != this.state.value.document) {
+      const content = JSON.stringify(this.state.value.toJSON())
+      localStorage.setItem('content', content)
+    // }
+
+  }
+
+  clickCancel = () => {
+    const existingValue = JSON.parse(localStorage.getItem('content'))
+    this.setState({value: Value.fromJSON(existingValue)})
+    // const initialValue = Value.fromJSON(existingValue || initialValueAsJson)
+  }
+
+  changeBlockNodeCount = ({target: {value}}) =>{
+    if(value>=0) this.setState({initialTopLevelBlockNodeCount:value})
+  }
   
   render() {
+    let {value,initialTopLevelBlockNodeCount} = this.state;
+
+    console.log(JSON.parse(JSON.stringify(value)).document.nodes.length)
+
     return (
       <div className="editor-app">
         <Toolbar>
@@ -388,11 +412,18 @@ export class RichTextExample extends React.Component {
           </Button>
 
           <Button>
-            {/* Save */}
-            <Icon>save</Icon>
+            Top Level Block Count
+            <input onChange={this.changeBlockNodeCount} type="number" value={initialTopLevelBlockNodeCount}/>
+            {/* <Icon>save</Icon> */}
           </Button>
-          <Button>
-            <Icon>cancel_presentation</Icon>
+
+          <Button onClick={this.clickSave}>
+            Save
+            {/* <Icon>save</Icon> */}
+          </Button>
+          <Button onClick={this.clickCancel}>
+            Cancel
+            {/* <Icon>cancel_presentation</Icon> */}
           </Button>
           
 
@@ -413,6 +444,28 @@ export class RichTextExample extends React.Component {
           onDrop={this.onDropOrPaste}
           onPaste={this.onDropOrPaste}
         />
+        <div className="bottom-toolbar">
+          <Toolbar>
+            <Button>
+              Max Top Level Block Count
+              <input onChange={this.changeBlockNodeCount} type="number" value={initialTopLevelBlockNodeCount}/>
+              {/* <Icon>save</Icon> */}
+            </Button>
+
+            <Button onClick={this.clickSave}>
+              Save
+              {/* <Icon>save</Icon> */}
+            </Button>
+            <Button onClick={this.clickCancel}>
+              Cancel
+              {/* <Icon>cancel_presentation</Icon> */}
+            </Button>
+            
+
+            
+          </Toolbar>
+
+        </div>
       </div>
     )
   }
@@ -453,6 +506,7 @@ export class RichTextExample extends React.Component {
       const { value: { document, blocks } } = this.state
 
       if (blocks.size > 0) {
+        // console.log(document, blocks, type)
         const parent = document.getParent(blocks.first().key)
         isActive = this.hasBlock('list-item') && parent && parent.type === type
       }
@@ -511,7 +565,6 @@ export class RichTextExample extends React.Component {
     event.preventDefault()
     const src = window.prompt('Enter the URL of the image:')
 
-    console.log(src)
     if (!src) return
     this.editor.command(insertImage, src)
   }
@@ -521,8 +574,6 @@ export class RichTextExample extends React.Component {
 
     if(event.target.files){
       var fileList=event.target.files;
-      console.log(fileList[0].name)
-      // this.editor.command(insertImage, fileList[0].name)
   
       for (const file of fileList) {
         const reader = new FileReader()
@@ -641,12 +692,17 @@ export class RichTextExample extends React.Component {
 
   onChange = ({ value }) => {
 
-    if (value.document != this.state.value.document) {
-      const content = JSON.stringify(value.toJSON())
-      localStorage.setItem('content', content)
-    }
+    // if (value.document != this.state.value.document) {
+    //   const content = JSON.stringify(value.toJSON())
+    //   localStorage.setItem('content', content)
+    // }
 
-    this.setState({ value })
+    let {initialTopLevelBlockNodeCount} = this.state;
+    let currentBlockCount = JSON.parse(JSON.stringify(value)).document.nodes.length;
+    
+    if(currentBlockCount<=initialTopLevelBlockNodeCount) this.setState({ value })
+
+    this.setState({ disableSave: true })
   }
 
   /**
@@ -746,4 +802,4 @@ export class RichTextExample extends React.Component {
 
 
 
-export default App
+// export default App

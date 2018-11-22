@@ -12,3 +12,11 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
+
+
+.bottom-toolbar{
+  border-top: 2px solid;
+  border-top-color: aliceblue;
+  margin-top: 30px;
+  padding-top: 15px;
+}
