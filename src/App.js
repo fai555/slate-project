@@ -287,6 +287,9 @@ const isItalicHotkey = isKeyHotkey('mod+i')
 const isUnderlinedHotkey = isKeyHotkey('mod+u')
 const isCodeHotkey = isKeyHotkey('mod+`')
 
+const isListTabHotKey = isKeyHotkey('tab')
+const isListShiftTabHotKey = isKeyHotkey('shift+tab')
+
 /**
  * The rich text example.
  *
@@ -714,8 +717,8 @@ export class RichTextExample extends React.Component {
     let {initialTopLevelBlockNodeCount} = this.state;
     let currentBlockCount = JSON.parse(JSON.stringify(value)).document.nodes.length;
     
-    console.log(currentBlockCount)
-    console.log(initialTopLevelBlockNodeCount)
+    // console.log(currentBlockCount)
+    // console.log(initialTopLevelBlockNodeCount)
     if(initialTopLevelBlockNodeCount === 0 || currentBlockCount<=initialTopLevelBlockNodeCount) this.setState({ value })
 
     
@@ -740,7 +743,59 @@ export class RichTextExample extends React.Component {
       mark = 'underlined'
     } else if (isCodeHotkey(event)) {
       mark = 'code'
-    } else {
+    } 
+    
+    // else if(isListTabHotKey(event)){
+    //   console.log("tab")
+    //   console.log(this.hasBlock('list-item'))
+    //   mark= 'code'
+    // } else if(isListShiftTabHotKey(event)){
+    //   console.log("shift+tab")
+    //   mark= 'code'
+    // }
+
+    else if(isListTabHotKey(event) || isListShiftTabHotKey(event)){
+      // console.log(this.hasBlock('list-item'))
+
+
+      const { editor } = this
+      const { value } = editor
+      const { document } = value
+  
+
+
+      // Handle the extra wrapping required for list buttons.
+      const isList = this.hasBlock('list-item')
+      const type = 'list-item'
+      const isType = value.blocks.some(block => {
+        return !!document.getClosest(block.key, parent => parent.type == type)
+      })
+
+      console.log("a"+this.hasBlock('bulleted-list'))
+      console.log("b"+this.hasBlock('numbered-list'))
+
+      // if (isList && isType) {
+      //   editor
+      //     .setBlocks(DEFAULT_NODE)
+      //     .unwrapBlock('bulleted-list')
+      //     .unwrapBlock('numbered-list')
+      // } else if (isList) {
+      //   editor
+      //     .unwrapBlock(
+      //       type == 'bulleted-list' ? 'numbered-list' : 'bulleted-list'
+      //     )
+      //     .wrapBlock(type)
+      // } else 
+      
+      if (isList){
+        editor.setBlocks('list-item').wrapBlock('bulleted-list')
+      }
+
+      return null
+
+    }
+    
+    else {
       return next()
     }
 
@@ -775,6 +830,7 @@ export class RichTextExample extends React.Component {
     const { document } = value
 
     // Handle everything but list buttons.
+    // console.log(this.hasBlock(type))
     if (type != 'bulleted-list' && type != 'numbered-list') {
       const isActive = this.hasBlock(type)
       const isList = this.hasBlock('list-item')
