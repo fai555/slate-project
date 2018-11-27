@@ -116,6 +116,13 @@ const schema = {
     },
   },
   blocks: {
+    // nodes: [{
+    //   match: [{ type: 'list-item' }],
+    // }],
+    // normalize: (editor, node, error, next) => {
+    //   const { nodes } = node
+    //   if (nodes.size !== 3) return next()
+    // },
     image: {
       isVoid: true,
     },
@@ -128,141 +135,141 @@ const schema = {
  * @type {Component}
  */
 
-class App extends React.Component {
+// class App extends React.Component {
 
-  state = {
-    value: initialValue,
-  }
-  /**
-   * Store a reference to the `editor`.
-   *
-   * @param {Editor} editor
-   */
+//   state = {
+//     value: initialValue,
+//   }
+//   /**
+//    * Store a reference to the `editor`.
+//    *
+//    * @param {Editor} editor
+//    */
 
-  ref = editor => {
-    this.editor = editor
-  }
+//   ref = editor => {
+//     this.editor = editor
+//   }
 
-  /**
-   * Render the app.
-   *
-   * @return {Element} element
-   */
+//   /**
+//    * Render the app.
+//    *
+//    * @return {Element} element
+//    */
 
-  onChange = ({ value }) => {
-    this.setState({ value })
-  }
+//   onChange = ({ value }) => {
+//     this.setState({ value })
+//   }
 
-  render() {
-    return (
-      <div>
-        <Toolbar>
-          <Button onMouseDown={this.onClickImage}>
-            <Icon>image</Icon>
-          </Button>
-        </Toolbar>
-        <Editor 
+//   render() {
+//     return (
+//       <div>
+//         <Toolbar>
+//           <Button onMouseDown={this.onClickImage}>
+//             <Icon>image</Icon>
+//           </Button>
+//         </Toolbar>
+//         <Editor 
         
-        placeholder="Enter some text..."
-        ref={this.ref}
-        defaultValue={initialValue}
-        schema={schema}
-        onDrop={this.onDropOrPaste}
-        onPaste={this.onDropOrPaste}
-        renderNode={this.renderNode}
+//         placeholder="Enter some text..."
+//         ref={this.ref}
+//         defaultValue={initialValue}
+//         schema={schema}
+//         onDrop={this.onDropOrPaste}
+//         onPaste={this.onDropOrPaste}
+//         renderNode={this.renderNode}
 
 
-        value={this.state.value} 
-        onChange={this.onChange} />
-        {/* <Editor
-          placeholder="Enter some text..."
-          ref={this.ref}
-          defaultValue={initialValue}
-          schema={schema}
-          onDrop={this.onDropOrPaste}
-          onPaste={this.onDropOrPaste}
-          renderNode={this.renderNode}
-        /> */}
-      </div>
-    )
-  }
+//         value={this.state.value} 
+//         onChange={this.onChange} />
+//         {/* <Editor
+//           placeholder="Enter some text..."
+//           ref={this.ref}
+//           defaultValue={initialValue}
+//           schema={schema}
+//           onDrop={this.onDropOrPaste}
+//           onPaste={this.onDropOrPaste}
+//           renderNode={this.renderNode}
+//         /> */}
+//       </div>
+//     )
+//   }
 
-  /**
-   * Render a Slate node.
-   *
-   * @param {Object} props
-   * @return {Element}
-   */
+//   /**
+//    * Render a Slate node.
+//    *
+//    * @param {Object} props
+//    * @return {Element}
+//    */
 
-  renderNode = (props, editor, next) => {
-    const { attributes, node, isFocused } = props
+//   renderNode = (props, editor, next) => {
+//     const { attributes, node, isFocused } = props
 
-    switch (node.type) {
-      case 'image': {
-        const src = node.data.get('src')
-        return <Image src={src} selected={isFocused} {...attributes} />
-      }
+//     switch (node.type) {
+//       case 'image': {
+//         const src = node.data.get('src')
+//         return <Image src={src} selected={isFocused} {...attributes} />
+//       }
 
-      default: {
-        return next()
-      }
-    }
-  }
+//       default: {
+//         return next()
+//       }
+//     }
+//   }
 
-  /**
-   * On clicking the image button, prompt for an image and insert it.
-   *
-   * @param {Event} event
-   */
+//   /**
+//    * On clicking the image button, prompt for an image and insert it.
+//    *
+//    * @param {Event} event
+//    */
 
-  onClickImage = event => {
-    event.preventDefault()
-    const src = window.prompt('Enter the URL of the image:')
+//   onClickImage = event => {
+//     event.preventDefault()
+//     const src = window.prompt('Enter the URL of the image:')
     
-    if (!src) return
-    this.editor.command(insertImage, src)
-  }
+//     if (!src) return
+//     this.editor.command(insertImage, src)
+//   }
 
-  /**
-   * On drop, insert the image wherever it is dropped.
-   *
-   * @param {Event} event
-   * @param {Editor} editor
-   * @param {Function} next
-   */
+//   /**
+//    * On drop, insert the image wherever it is dropped.
+//    *
+//    * @param {Event} event
+//    * @param {Editor} editor
+//    * @param {Function} next
+//    */
 
-  onDropOrPaste = (event, editor, next) => {
-    const target = getEventRange(event, editor)
-    if (!target && event.type === 'drop') return next()
+//   onDropOrPaste = (event, editor, next) => {
+//     const target = getEventRange(event, editor)
+//     if (!target && event.type === 'drop') return next()
 
-    const transfer = getEventTransfer(event)
-    const { type, text, files } = transfer
+//     const transfer = getEventTransfer(event)
+//     const { type, text, files } = transfer
 
-    if (type === 'files') {
-      for (const file of files) {
-        const reader = new FileReader()
-        const [mime] = file.type.split('/')
-        if (mime !== 'image') continue
+//     if (type === 'files') {
+//       for (const file of files) {
+//         const reader = new FileReader()
+//         const [mime] = file.type.split('/')
+//         if (mime !== 'image') continue
 
-        reader.addEventListener('load', () => {
-          editor.command(insertImage, reader.result, target)
-        })
+//         reader.addEventListener('load', () => {
+//           editor.command(insertImage, reader.result, target)
+//         })
 
-        reader.readAsDataURL(file)
-      }
-      return
-    }
+//         reader.readAsDataURL(file)
+//       }
+//       return
+//     }
 
-    if (type === 'text') {
-      if (!isUrl(text)) return next()
-      if (!isImage(text)) return next()
-      editor.command(insertImage, text, target)
-      return
-    }
+//     if (type === 'text') {
+//       if (!isUrl(text)) return next()
+//       if (!isImage(text)) return next()
+//       editor.command(insertImage, text, target)
+//       return
+//     }
 
-    next()
-  }
-}
+//     next()
+//   }
+// }
 
 /**
  * Export.
@@ -296,7 +303,7 @@ const isListShiftTabHotKey = isKeyHotkey('shift+tab')
  * @type {Component}
  */
 
-export class RichTextExample extends React.Component {
+export default class App extends React.Component {
   /**
    * Deserialize the initial editor value.
    *
@@ -377,7 +384,7 @@ export class RichTextExample extends React.Component {
     // let {initialTopLevelBlockNodeCount} = this.state;
     let currentBlockCount = JSON.parse(JSON.stringify(this.state.value)).document.nodes.length;
     
-    if(value !== 0 && currentBlockCount<value) {
+    if(value !== 0 && currentBlockCount>value) {
       console.log("yes")
       this.setState({ disableSave: true })
     }else{
@@ -427,14 +434,12 @@ export class RichTextExample extends React.Component {
           </Button>
           
 
-          <Button onClick={this.clickSave}>
+          {/* <Button onClick={this.clickSave}>
             Save
-            {/* <Icon>save</Icon> */}
           </Button>
           <Button onClick={this.clickCancel}>
             Cancel
-            {/* <Icon>cancel_presentation</Icon> */}
-          </Button>
+          </Button> */}
           
 
           
@@ -719,7 +724,15 @@ export class RichTextExample extends React.Component {
     
     // console.log(currentBlockCount)
     // console.log(initialTopLevelBlockNodeCount)
-    if(initialTopLevelBlockNodeCount === 0 || currentBlockCount<=initialTopLevelBlockNodeCount) this.setState({ value })
+    // if(initialTopLevelBlockNodeCount === 0 || currentBlockCount<=initialTopLevelBlockNodeCount)
+    
+    if(value !== 0 && currentBlockCount>initialTopLevelBlockNodeCount) {
+      this.setState({ disableSave: true })
+    }else{
+      this.setState({ disableSave: false })
+    }
+
+    this.setState({ value })
 
     
   }
@@ -729,10 +742,11 @@ export class RichTextExample extends React.Component {
    *
    * @param {Event} event
    * @param {Editor} editor
+   * @param {Object} props
    * @return {Change}
    */
 
-  onKeyDown = (event, editor, next) => {
+  onKeyDown = (event, editor, next, type) => {
     let mark
 
     if (isBoldHotkey(event)) {
@@ -754,15 +768,13 @@ export class RichTextExample extends React.Component {
     //   mark= 'code'
     // }
 
-    else if(isListTabHotKey(event) || isListShiftTabHotKey(event)){
+    else if(isListTabHotKey(event)){
       // console.log(this.hasBlock('list-item'))
 
 
       const { editor } = this
       const { value } = editor
       const { document } = value
-  
-
 
       // Handle the extra wrapping required for list buttons.
       const isList = this.hasBlock('list-item')
@@ -771,8 +783,51 @@ export class RichTextExample extends React.Component {
         return !!document.getClosest(block.key, parent => parent.type == type)
       })
 
-      console.log("a"+this.hasBlock('bulleted-list'))
-      console.log("b"+this.hasBlock('numbered-list'))
+      // console.log("a"+this.hasBlock('bulleted-list'))
+      // console.log("b"+this.hasBlock('numbered-list'))
+      // console.log(type)
+
+      // if (isList && isType) {
+      //   editor
+      //     .setBlocks(DEFAULT_NODE)
+      //     .unwrapBlock('bulleted-list')
+      //     .unwrapBlock('numbered-list')
+      // } else if (isList) {
+      //   editor
+      //     .unwrapBlock(
+      //       type == 'bulleted-list' ? 'numbered-list' : 'bulleted-list'
+      //     )
+      //     .wrapBlock(type)
+      // } else 
+      
+      if (isList){
+        editor.setBlocks('list-item').wrapBlock('bulleted-list')
+      }
+
+      return null
+
+    }
+
+    else if(isListShiftTabHotKey(event)){
+      // console.log(this.hasBlock('list-item'))
+
+
+      const { editor } = this
+      const { value } = editor
+      const { document } = value
+
+      // Handle the extra wrapping required for list buttons.
+      const isList = this.hasBlock('list-item')
+      const type = 'list-item'
+      const isType = value.blocks.some(block => {
+        return !!document.getClosest(block.key, parent => parent.type == type)
+      })
+
+      console.log(value)
+
+      // console.log("a"+this.hasBlock('bulleted-list'))
+      // console.log("b"+this.hasBlock('numbered-list'))
+      // console.log(type)
 
       // if (isList && isType) {
       //   editor
@@ -874,4 +929,4 @@ export class RichTextExample extends React.Component {
 
 
 
-export default App
+// export default App
